@@ -3,7 +3,7 @@
 const Promise = require('bluebird');
 const config = require('../config/' + (process.env.APPENV || ''));
 const iotHubClient = Promise.promisifyAll(require('../helpers/init_sender')(config));
-const Message = require('azure-iot-device').Message;
+const Message = require('azure-iot-common').Message;
 
 module.exports = function stateHandlerFactory(socket, db) {
     return function stateHandler(message) {
@@ -40,9 +40,12 @@ module.exports = function stateHandlerFactory(socket, db) {
                     },
                 };
 
-                const message = new Message(data);
+                const message = new Message(JSON.stringify(data));
 
-                return iotHubClient.sendEventAsync(message);
+                console.log('Sending to', deviceId, message.getData());
+
+                // return iotHubClient.sendEventAsync(message);
+                return iotHubClient.sendAsync(deviceId, message)
                 // return Promise.resolve(true);
             })
             .then(() => {
