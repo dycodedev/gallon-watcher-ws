@@ -19,36 +19,39 @@ module.exports = function stateHandlerFactory(socket, db) {
 
         console.log('Got state message');
 
-        const deviceId = message.deviceId;
+        const deviceId = payload.deviceId;
         const collection = db.collection('devices');
         const query = {
-            'device.id': deviceID,
+            'device.id': deviceId,
         };
 
         const update = {
             $set: {
-                'attr.state': parseInt(message.body.state),
+                'attr.state': parseInt(payload.state),
             },
         };
 
-        return collection.findOneAndUpdate(query, update)
-            .then(iotHubClient.openAsync())
+        return iotHubClient.openAsync()
             .then(() => {
                 const data = {
                     name: 'control',
                     parameters: {
-                        state: message.state
+                        state: payload.state
                     },
                 };
 
                 const message = new Message(data);
 
                 return iotHubClient.sendEventAsync(message);
+                // return Promise.resolve(true);
             })
             .then(() => {
                 console.log('Control event is sent to Azure IoT Hub');
-                iotHubClient.closeAsync();
+                socket.emit('getState', JSON.stringify({ deviceId, state: payload.state }));
+
+                return iotHubClient.closeAsync();
             })
+            .then(() => collection.findOneAndUpdate(query, update))
             .catch(e =>  {
                 console.error('Failed to send event.', e)
                 iotHubClient.closeAsync();
