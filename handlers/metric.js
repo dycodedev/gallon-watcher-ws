@@ -33,6 +33,10 @@ module.exports = function handlerFactory(io, db) {
             },
         };
 
+        if (message.body.ldr || message.body.ldr === 0) {
+            update.$set['attr.ldr'] = parseInt(message.body.ldr);
+        }
+
         let device;
         const todos = [];
 

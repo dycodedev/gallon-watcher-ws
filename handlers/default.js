@@ -28,7 +28,6 @@ module.exports = function makeHandler(io, db) {
                 stateHandler(message)
                     .then(() => console.log('Done processing state'))
                     .catch(e => console.error('Failed processing state.', e));
-                io.emit('state', body);
             }
         },
     };
