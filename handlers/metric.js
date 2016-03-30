@@ -42,7 +42,7 @@ module.exports = function handlerFactory(io, db) {
                 device = found;
 
                 if (!found) {
-                    return Promise.throw(new Error('Device is not found'));
+                    return Promise.reject(new Error('Device is not found'));
                 }
 
                 return Promise.resolve(device);
