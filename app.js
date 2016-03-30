@@ -9,7 +9,7 @@ const mongodb = require('mongodb');
 
 const config = require('./config/' + (process.env.APPENV || ''));
 const handlers = require('./handlers/default');
-const onControlMessage = require('./handlers/fn_control');
+const stateControlFactory = require('./handlers/state');
 
 const MongoClient = mongodb.MongoClient;
 const Policy = amqp.Policy;
@@ -65,6 +65,18 @@ MongoClient.connect(config.mongodb.connectionString)
 
         handler = handlers(io, db);
 
+        io.on('connection', socket => {
+            function onDisconnect(socket) {
+                console.log('Disconnected', socket.id);
+            }
+
+            socket.on('disconnect', onDisconnect.bind(null, socket));
+            socket.on('disconnected', onDisconnect.bind(null, socket));
+            socket.on('setState', stateControlFactory(socket, db));
+
+            console.log('socket.io Received connection');
+        });
+
         return client.connect(config.iot.uri);
     })
     .then(() => {
@@ -80,18 +92,6 @@ MongoClient.connect(config.mongodb.connectionString)
     .catch(e => {
         console.error('Caught: ', e.stack);
     });
-
-io.on('connection', socket => {
-    function onDisconnect(socket) {
-        console.log('Disconnected', socket.id);
-    }
-
-    socket.on('disconnect', onDisconnect.bind(null, socket));
-    socket.on('disconnected', onDisconnect.bind(null, socket));
-    socket.on('control', onControlMessage);
-
-    console.log('socket.io Received connection');
-});
 
 process.on('uncaughtException', err => {
     console.error('uncaughtException', err.stack);
