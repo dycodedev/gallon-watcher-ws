@@ -72,7 +72,7 @@ MongoClient.connect(config.mongodb.connectionString)
 
             socket.on('disconnect', onDisconnect.bind(null, socket));
             socket.on('disconnected', onDisconnect.bind(null, socket));
-            socket.on('setState', stateControlFactory(socket, db));
+            socket.on('setState', stateControlFactory(io, db));
 
             console.log('socket.io Received connection');
         });
