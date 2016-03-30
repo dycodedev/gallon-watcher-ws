@@ -1,0 +1,18 @@
+{
+  "name": "gallon-watcher-ws",
+  "version": "1.0.0",
+  "description": "Gallon watcher via websocket & Azure IoT Hub",
+  "main": "app.js",
+  "private": true,
+  "author": "Alwin Arrasyid <alwin.ridd@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "amqp10": "^3.1.1",
+    "bluebird": "^3.3.4",
+    "moment": "^2.12.0",
+    "mongodb": "^2.1.13",
+    "nodemailer": "^2.3.0",
+    "nodemailer-mandrill-transport": "^1.1.0",
+    "socket.io": "^1.4.5"
+  }
+}
