@@ -7,16 +7,21 @@ const moment = require('moment');
 
 const config = require('../config/' + (process.env.APPENV || ''));
 
+const twilio = require('twilio')(config.twilio.sid, config.twilio.token);
+const makeDevice = require('../helpers/generate_device');
+
 module.exports = function handlerFactory(io, db) {
     return function handleMetric(message) {
         const deviceCollection = db.collection('devices');
-        const deviceId = message.messageAnnotations['iothub-connection-device-id'];
         const transporter = mailer.createTransport(mandrill({
             auth: {
                 apiKey: config.mandrill.key,
             },
         }));
         const transport = Promise.promisifyAll(transporter);
+
+        let deviceId = message.messageAnnotations['iothub-connection-device-id']
+            || message.body.deviceId;
 
         if (!deviceId) {
             return false;
@@ -46,7 +51,14 @@ module.exports = function handlerFactory(io, db) {
                 device = found;
 
                 if (!found) {
-                    return Promise.reject(new Error('Device is not found'));
+                    const deviceData = {
+                        id: deviceId,
+                        waterLevelPercent: parseInt(message.body.waterLevelPercent),
+                        ldr: parseInt(message.body.ldr),
+                    };
+
+                    return deviceCollection.insert(makeDevice(deviceData));
+                    // return Promise.reject(new Error('Device is not found'));
                 }
 
                 return Promise.resolve(device);
@@ -77,9 +89,15 @@ module.exports = function handlerFactory(io, db) {
                             subject: contact.subject || 'Gallon Notification',
                             html: `<p>${contact.message}</p>`,
                         });
+                    } else if (contact.type === 'sms') {
+                        return twilio.sendMessage({
+                            to: contact.to,
+                            from: config.twilio.number,
+                            body: contact.message,
+                        });
                     }
 
-                    return Promise.resolve([]);
+                    return Promise.resolve(false);
                 });
             })
             .then(result => {
@@ -104,17 +122,4 @@ function getContacts(db, deviceid) {
 
     return collection.find(query)
         .toArray();
-}
-
-function sendNotification(contact) {
-    if (contact.type === 'email') {
-        return sendMailAsync({
-            from: config.mandrill.from,
-            to: contact.to,
-            subject: contact.subject || 'Gallon Notification',
-            html: `<p>${contact.message}</p>`,
-        });
-    }
-
-    return Promise.resolve(false);
 }
