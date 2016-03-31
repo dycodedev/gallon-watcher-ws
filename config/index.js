@@ -7,8 +7,9 @@ module.exports = {
         protocol: 'amqps',
         sasName: 'iothubowner',
         sasKey: process.env.SASKEY,
-        eventHubHost: 'ihsuprodsgres007dednamespace.servicebus.windows.net',
-        eventHubName: 'iothub-ehub-gallon-hub-25662-1a128f84d6',
+        eventHubHost: process.env.EVENTHUBHOST,
+        eventHubName: process.env.EVENTHUBNAME,
+        connectionString: process.env.IOT_CONNECTIONSTR,
         get uri() {
             return `${this.protocol}://${encodeURIComponent(this.sasName)}:${encodeURIComponent(this.sasKey)}@${this.eventHubHost}`;
         },
@@ -30,8 +31,10 @@ module.exports = {
         from: 'no-reply-gallon@dycodex.com',
     },
 
-    sender: {
-        connectionString: process.env.DEVICESTRING || '',
-        deviceId: 'gallon01-watcher01',
+    twilio: {
+        sid: process.env.TWILIO_SID || '',
+        token: process.env.TWILIO_TOKEN || '',
+        number: process.env.TWILIO_NUMBER,
+        twiml: 'http://home-x.cloudapp.net:9000/api/triggers/twiml/',
     },
 };

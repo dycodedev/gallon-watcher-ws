@@ -7,16 +7,25 @@ Listen for every incoming data from Azure IoT Hub and re-emit it via websocket t
 
 Using nodemon (development)
 ```sh
-APPENV=local nodemon app.js
+APPENV=local [ENVIRONMENT_VARIABLES] nodemon app.js
 ```
 
 Using pm2 (production)
 ```sh
-SASKEY=YOUR_SAS_KEY pm2 start app.js --name gallonw-watcher-ws
+APPENV=production [ENVIRONMENT_VARIABLES] pm2 start app.js --name gallonw-watcher-ws
 ```
 
-## Note on APPENV variable
+## Environment variables
 
-`APPENV` environment variable is used to identify configuration file which is being used by the app. The possible values are `dev.local`, `local`, or `production`.
+You can omit these variables by replacing their reference inside the configuration file.
 
-`APPENV` can be omitted when running app on production environment. However, you **should** define `SASKEY` variable that contains your Azure IoT Hub policy primary key.
+* `APPENV` environment variable is used to identify configuration file which is being used by the app. The possible values are `dev.local`, `local`, or `production`.
+* `SASKEY` is a primary key of the IoT hub owner.
+* `EVENTHUBHOST` is an event hub host that is provided by your IoT hub.
+* `EVENTHUBNAME` is an event hub name that is provided by your IoT hub.
+* `IOT_CONNECTIONSTR`  is an IoT hub owner connection string.
+* `MANDRILLKEY` is a Mandrill service key.
+* `TWILIO_SID` is your Twilio SID value.
+* `TWILIO_TOKEN` is your Twilio token value.
+* `TWILIO_NUMBER` is your registered Twilio phone number.
+
