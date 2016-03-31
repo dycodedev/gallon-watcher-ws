@@ -44,9 +44,7 @@ module.exports = function stateHandlerFactory(socket, db) {
 
                 console.log('Sending to', deviceId, message.getData());
 
-                // return iotHubClient.sendEventAsync(message);
                 return iotHubClient.sendAsync(deviceId, message)
-                // return Promise.resolve(true);
             })
             .then(() => {
                 console.log('Control event is sent to Azure IoT Hub');

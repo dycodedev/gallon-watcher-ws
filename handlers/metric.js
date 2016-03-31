@@ -42,6 +42,12 @@ module.exports = function handlerFactory(io, db) {
             update.$set['attr.ldr'] = parseInt(message.body.ldr);
         }
 
+        if (message.body.state === 1 || message.body.state === 0) {
+            update.$set['attr.state'] = parseInt(message.body.state);
+        }
+
+        io.emit('getState', JSON.stringify({ deviceId: deviceId, state: message.body.state }));
+
         let device;
         const todos = [];
 
