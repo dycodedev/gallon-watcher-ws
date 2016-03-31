@@ -99,6 +99,14 @@ module.exports = function handlerFactory(io, db) {
                                 body: contact.message,
                             });
                         }
+                    } else if (contact.type === 'call') {
+                        if (/^\+([0-9]+)/.test(contact.to)) {
+                            return twilio.makeCall({
+                                to: contact.to,
+                                from: config.twilio.number,
+                                url: config.twilio.twiml + deviceId,
+                            });
+                        }
                     }
 
                     return Promise.resolve(false);
