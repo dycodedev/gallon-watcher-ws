@@ -77,7 +77,7 @@ module.exports = function handlerFactory(io, db) {
                 console.log(lastAlert, new Date());
                 console.log(moment().diff(moment(lastAlert), 'seconds'));
 
-                if (moment().diff(moment(lastAlert), 'seconds') >= 30 || !lastAlert) {
+                if (moment().diff(moment(lastAlert), 'seconds') >= 60 * 5 || !lastAlert) {
                     console.log('Gathering contact....');
 
                     contacts.forEach(contact => {
