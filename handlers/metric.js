@@ -92,11 +92,13 @@ module.exports = function handlerFactory(io, db) {
                             html: `<p>${contact.message}</p>`,
                         });
                     } else if (contact.type === 'sms') {
-                        return twilio.sendMessage({
-                            to: contact.to,
-                            from: config.twilio.number,
-                            body: contact.message,
-                        });
+                        if (/^\+([0-9]+)/.test(contact.to)) {
+                            return twilio.sendMessage({
+                                to: contact.to,
+                                from: config.twilio.number,
+                                body: contact.message,
+                            });
+                        }
                     }
 
                     return Promise.resolve(false);
