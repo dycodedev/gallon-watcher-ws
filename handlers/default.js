@@ -22,13 +22,13 @@ module.exports = function makeHandler(io, db) {
                 io.emit('metric', body);
             }
 
-            if (body.state) {
-                console.log('Emitting state', JSON.stringify(body));
+            // if (body.state) {
+            //     console.log('Emitting state', JSON.stringify(body));
 
-                stateHandler(message)
-                    .then(() => console.log('Done processing state'))
-                    .catch(e => console.error('Failed processing state.', e));
-            }
+            //     stateHandler(message)
+            //         .then(() => console.log('Done processing state'))
+            //         .catch(e => console.error('Failed processing state.', e));
+            // }
         },
     };
 };
