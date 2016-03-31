@@ -71,7 +71,9 @@ module.exports = function handlerFactory(io, db) {
                 console.log(lastAlert, new Date());
                 console.log(moment().diff(moment(lastAlert), 'seconds'));
 
-                if (moment().diff(moment(lastAlert), 'seconds') >= 30) {
+                if (moment().diff(moment(lastAlert), 'seconds') >= 30 || !lastAlert) {
+                    console.log('Gathering contact....');
+
                     contacts.forEach(contact => {
                         if (parseInt(message.body.waterLevelPercent) < parseInt(contact.threshold)) {
                             todos.push(contact.action);
